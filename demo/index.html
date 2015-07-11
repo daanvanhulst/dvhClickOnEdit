@@ -1,0 +1,12 @@
+    <html ng-app="sampleApp">
+      <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+        <script src="../dist/dvhClickToEdit.tpl.min.js"></script>
+        <script src="../dist/dvhClickToEdit.min.js"></script>
+        <script src="app.js"></script>
+      </head>
+      <body ng-controller="SampleCtrl">
+        <h1 ng-bind="data.text"></h1>
+       <dvh-click-to-edit></dvh-click-to-edit>
+      </body>
+    </html>

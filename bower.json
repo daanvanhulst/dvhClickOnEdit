@@ -1,0 +1,20 @@
+{
+  "name": "dvhClickToEdit",
+  "version": "0.0.0",
+  "homepage": "https://github.com/daanvanhulst/dvh-ng-boilerplate-lt",
+  "authors": [
+    "daanh <dvhulst@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.4.2",
+    "angular-mocks": "~1.4.2"
+  }
+}

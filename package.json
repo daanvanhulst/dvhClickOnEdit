@@ -1,0 +1,62 @@
+{
+  "name": "dvhClickToEdit",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daanvanhulst/dvh-ng-boilerplate-lt.git"
+  },
+  "keywords": [
+    "Angular",
+    "TypeScript",
+    "Gulp",
+    "Karma",
+    "dvh"
+  ],
+  "author": "Daan van Hulst",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daanvanhulst/dvh-ng-boilerplate-lt/issues"
+  },
+  "homepage": "https://github.com/daanvanhulst/dvh-ng-boilerplate-lt",
+  "devDependencies": {
+    "browser-sync": "^2.7.13",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^2.3.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-debug": "^2.0.1",
+    "gulp-inject": "^1.3.1",
+    "gulp-jasmine": "^2.0.1",
+    "gulp-jshint": "^1.11.2",
+    "gulp-less": "^3.0.3",
+    "gulp-livereload": "^3.8.0",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-minify-html": "^1.0.3",
+    "gulp-ng-annotate": "^1.0.0",
+    "gulp-ng-html2js": "^0.2.0",
+    "gulp-ng-ts-docs": "^0.2.13",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-tslint": "^3.1.0-beta",
+    "gulp-typescript": "^2.7.8",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.6",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-ie-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "karma-phantomjs2-launcher": "^0.1.6",
+    "karma-typescript-preprocessor": "0.0.19",
+    "phantomjs": "^1.9.17",
+    "typescript": "^1.5.0-beta"
+  }
+}
