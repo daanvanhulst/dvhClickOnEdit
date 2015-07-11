@@ -7,34 +7,52 @@
 module ClickToEdit {
 
     export interface IClickToEditScope extends ng.IScope {
-        name: string;
+        fieldType: string;
+        value: string;
     }
 
-    export class BaseElement {
+    export class Element {
+        // #region Angular directive properties, fields, and methods
         public link: (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => void;
-        public template = "<h1>My Directive</h1>";
-        public scope = {};
+        public scope = {
+            fieldType: "@",
+            value: "@"
+        };
+        // #endregion
 
-        constructor() {
-            BaseElement.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
-                element.bind("click", function(e) {
-                    alert("clicked");
-                });
+        // #region Initialization and destruction
+        constructor(editableDirectiveFactory, $compile) {
+            Element.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
+
+                // Create the editable element
+                var editableElement = editableDirectiveFactory.createEditableDirective(scope.fieldType);
+
+                //Compile the editable element
+                var e = $compile(editableElement)(scope);
+
+                //Replace the current element with the editable element
+                element.replaceWith(e);
+
+                scope.$on("$destroy", this.destruct);
             };
         }
 
         public static Factory() {
-            var directive = () => {
-                return new BaseElement();
+            var directive = (editableDirectiveFactory, $compile) => {
+                return new Element(editableDirectiveFactory, $compile);
             };
 
-            directive["$inject"] = [];
+            directive["$inject"] = ["editableDirectiveFactory", "$compile"];
 
             return directive;
         }
+
+        private destruct() {
+            console.log("destroying");
+        }
+        // #endregion
     }
 
-    angular.module("dvhClickToEdit", []).directive("dvhClickToEdit", BaseElement.Factory());
+    angular.module("dvhClickToEdit", ["dvhClickToEdit.editableDirectiveFactory", "dvhClickToEdit.dvhTextEdit"])
+        .directive("dvhClickToEdit", Element.Factory());
 }
-
-

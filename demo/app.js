@@ -1,6 +1,4 @@
-    var app = angular.module("sampleApp", ["dvhClickToEdit"]);
+    var app = angular.module("sampleApp", ["dvhClickToEdit-tpl", "dvhClickToEdit"]);
     app.controller("SampleCtrl", function($scope) {
-		$scope.data = {
-			text: "henk"
-		}
+        $scope.text = "blablablabla";
     });
