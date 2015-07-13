@@ -9,6 +9,7 @@ module ClickToEdit {
     export interface IClickToEditScope extends ng.IScope {
         fieldType: string;
         value: string;
+		editMode: boolean;
     }
 
     export class Element {
@@ -23,6 +24,8 @@ module ClickToEdit {
         // #region Initialization and destruction
         constructor(editableDirectiveFactory, $compile) {
             Element.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
+
+				scope.editMode = false;
 
                 // Create the editable element
                 var editableElement = editableDirectiveFactory.createEditableDirective(scope.fieldType);

@@ -7,7 +7,7 @@ module ClickToEditFactories {
             var element = "";
             switch (type) {
                 case "textArea":
-                    element = "<dvh-textarea-edit><dvh-textarea-edit/>";
+                    element = "<dvh-text-area-edit><dvh-text-area-edit/>";
                     break;
                 case "text":
                 default:
