@@ -53,6 +53,10 @@ module ClickToEdit {
         // #endregion
     }
 
-    angular.module("dvhClickToEdit", ["dvhClickToEdit.editableDirectiveFactory", "dvhClickToEdit.dvhTextEdit"])
-        .directive("dvhClickToEdit", Element.Factory());
+    angular.module("dvhClickToEdit", [
+        "dvhClickToEdit.editableDirectiveFactory",
+        "dvhClickToEdit.dvhTextEdit",
+        "dvhClickToEdit.dvhTextAreaEdit"
+    ])
+    .directive("dvhClickToEdit", Element.Factory());
 }
