@@ -28,10 +28,10 @@ module ClickToEdit {
         // #endregion
 
         // #region Initialization and destruction
-        constructor(editableDirectiveFactory, $compile) {
+        constructor(editableDirectiveFactory, $compile, $sce) {
             Element.prototype.link = ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => {
 
-                scope.value = scope.dvhConfig.value;
+                scope.value = $sce.trustAsHtml(scope.dvhConfig.value);
 				scope.editMode = false;
 
                 scope.saveValue = function(value) {
@@ -57,11 +57,11 @@ module ClickToEdit {
         }
 
         public static Factory() {
-            var directive = (editableDirectiveFactory, $compile) => {
-                return new Element(editableDirectiveFactory, $compile);
+            var directive = (editableDirectiveFactory, $compile, $sce) => {
+                return new Element(editableDirectiveFactory, $compile, $sce);
             };
 
-            directive["$inject"] = ["editableDirectiveFactory", "$compile"];
+            directive["$inject"] = ["editableDirectiveFactory", "$compile", "$sce"];
 
             return directive;
         }

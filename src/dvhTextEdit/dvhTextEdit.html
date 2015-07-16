@@ -1,4 +1,4 @@
-<p ng-show="!editMode" ng-bind="value"></p>
+<span ng-show="!editMode" ng-bind="value"></span>
 <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a>
 <a ng-show="editMode" ng-click="saveValue(value)"><i class="fa fa-floppy-o"></i> Save</a>
 <input ng-show="editMode" type="text" ng-model="value" />
