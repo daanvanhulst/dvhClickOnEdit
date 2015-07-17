@@ -17,7 +17,6 @@ module ClickToEdit {
         // #region Initialization and destruction
         constructor() {
             TextAreaEdit.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
-                console.log(scope);
                 scope.$on("$destroy", this.destruct);
             };
         }

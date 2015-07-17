@@ -79,8 +79,10 @@ gulp.task('compile-ts', function () {
         tsResult.dts.pipe(gulp.dest(config.distPath));
         return tsResult.js
 						.pipe(ngAnnotate())
-                        .pipe(concat(p.name + ".min.js"))
+                        .pipe(concat(p.name + ".js"))
+                        .pipe(gulp.dest(config.distPath))
                         .pipe(uglify())
+                        .pipe(rename({ extname: '.min.js' }))
                         .pipe(sourcemaps.write('.'))
                         .pipe(gulp.dest(config.distPath));
 });
@@ -121,8 +123,10 @@ gulp.task('html2js', function() {
         moduleName: p.name + "-tpl",
         prefix: p.name + "/"
     }))
+    .pipe(concat(p.name + ".tpl.js"))
+    .pipe(gulp.dest(config.distPath))
     .pipe(uglify())
-    .pipe(concat(p.name + ".tpl.min.js"))
+    .pipe(rename({ extname: '.min.js' }))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(config.distPath));
 });

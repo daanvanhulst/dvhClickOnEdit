@@ -6,62 +6,85 @@
  */
 module ClickToEdit {
 
-    interface IDvhConfig {
+    interface IClickToEditConfig {
         fieldType: string;
         value: string;
         onSave: ( value ) => void;
     }
 
     export interface IClickToEditScope extends ng.IScope {
-        dvhConfig: IDvhConfig;
+        clickToEditConfig: IClickToEditConfig;
         value;
+        fieldType: string;
+        onSave: ( value ) => void;
+
+        isoConfig: IClickToEditConfig;
 		editMode: boolean;
-        saveValue: Function;
+        saveValue: ( value ) => void;
     }
 
-    export class Element {
+    export class ClickToEditElement {
         // #region Angular directive properties, fields, and methods
-        public link: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => void;
+        public link: {
+            pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => void;
+            post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => void;
+        };
         public scope = {
-            dvhConfig: "="
+            clickToEditConfig: "=?",
+            fieldType: "@",
+            value: "@",
+            onSave: "&"
         };
         // #endregion
 
         // #region Initialization and destruction
-        constructor(editableDirectiveFactory, $compile, $sce) {
-            Element.prototype.link = ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => {
+        constructor(editableDirectiveFactory, $compile) {
 
-                scope.value = $sce.trustAsHtml(scope.dvhConfig.value);
-				scope.editMode = false;
+            ClickToEditElement.prototype.link = {
+                pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => {
 
-                scope.saveValue = function(value) {
-                    scope.editMode = false;
-
-                    if (angular.isFunction(scope.dvhConfig.onSave)) {
-                        scope.dvhConfig.onSave(scope.value);
+                    if (angular.isDefined(scope.clickToEditConfig)) {
+                        scope.isoConfig = scope.clickToEditConfig;
+                    } else {
+                        scope.isoConfig = { value: "", fieldType: "text", onSave: null };
                     }
-                    scope.dvhConfig.value = value;
-                };
 
-                // Create the editable element
-                var editableElement = editableDirectiveFactory.createEditableDirective(scope.dvhConfig.fieldType);
+                    if ( angular.isDefined(scope.value) )     { scope.isoConfig.value = scope.value; }
+                    if ( angular.isDefined(scope.fieldType) ) { scope.isoConfig.fieldType = scope.fieldType; }
+                    if ( angular.isDefined(scope.onSave) )    {  scope.isoConfig.onSave = scope.onSave; }
 
-                //Compile the editable element
-                var e = $compile(editableElement)(scope);
+                    scope.editMode = false;
+                },
+                post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => {
 
-                //Replace the current element with the editable element
-                element.replaceWith(e);
+                    scope.saveValue = function(value) {
+                        scope.editMode = false;
 
-                scope.$on("$destroy", this.destruct);
+                        if (angular.isFunction(scope.isoConfig.onSave)) {
+                            scope.isoConfig.onSave(value);
+                        }
+                    };
+
+                    // Create the editable element
+                    var editableElement = editableDirectiveFactory.createEditableDirective(scope.isoConfig.fieldType);
+
+                    //Compile the editable element
+                    var e = $compile(editableElement)(scope);
+
+                    //Replace the current element with the editable element
+                    element.replaceWith(e);
+
+                    scope.$on("$destroy", this.destruct);
+                }
             };
         }
 
         public static Factory() {
-            var directive = (editableDirectiveFactory, $compile, $sce) => {
-                return new Element(editableDirectiveFactory, $compile, $sce);
+            var directive = (editableDirectiveFactory, $compile) => {
+                return new ClickToEditElement(editableDirectiveFactory, $compile);
             };
 
-            directive["$inject"] = ["editableDirectiveFactory", "$compile", "$sce"];
+            directive["$inject"] = ["editableDirectiveFactory", "$compile"];
 
             return directive;
         }
@@ -77,5 +100,5 @@ module ClickToEdit {
         "dvhClickToEdit.dvhTextEdit",
         "dvhClickToEdit.dvhTextAreaEdit"
     ])
-    .directive("dvhClickToEdit", Element.Factory());
+    .directive("dvhClickToEdit", ClickToEditElement.Factory());
 }

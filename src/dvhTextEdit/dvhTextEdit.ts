@@ -10,14 +10,14 @@ module ClickToEdit {
     export class TextEdit {
         // #region Angular directive properties, fields, and methods
         public link: (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => void;
-        public scope = false;
         public templateUrl = "dvhClickToEdit/dvhTextEdit/dvhTextEdit.html";
         // #endregion
 
         // #region Initialization and destruction
         constructor() {
-            TextEdit.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
-                console.log(scope);
+            TextEdit.prototype.link = (scope: IClickToEditScope,
+                                       element: ng.IAugmentedJQuery,
+                                       attrs: ng.IAttributes) => {
                 scope.$on("$destroy", this.destruct);
             };
         }

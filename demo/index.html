@@ -8,16 +8,19 @@
 		<script src='../bower_components/textAngular/dist/textAngular-rangy.min.js'></script>
         <script src='../bower_components/textAngular/dist/textAngular-sanitize.min.js'></script>
         <script src='../bower_components/textAngular/dist/textAngular.min.js'></script>
-        <script src="../dist/dvhClickToEdit.tpl.min.js"></script>
-        <script src="../dist/dvhClickToEdit.min.js"></script>
+        <script src="../dist/dvhClickToEdit.tpl.js"></script>
+        <script src="../dist/dvhClickToEdit.js"></script>
         <script src="app.js"></script>
       </head>
       <body ng-controller="SampleCtrl">
 
-       <h1 dvh-click-to-edit dvh-config="textConfig"></h1>
-       <dvh-click-to-edit dvh-config="textConfig"></dvh-click-to-edit>
-
-       <div dvh-click-to-edit dvh-config="textAreaConfig"></div>
-       <dvh-click-to-edit dvh-config="textAreaConfig"></dvh-click-to-edit>
+       <h1 dvh-click-to-edit click-to-edit-config="textConfig"></h1>
+       <br />
+       <div dvh-click-to-edit click-to-edit-config="textAreaConfig"></div>
+       <br />
+       <dvh-click-to-edit value="testvalue" field-type="text" on-save="saveTextField(value)"></dvh-click-to-edit>
+       <br />
+       <dvh-click-to-edit></dvh-click-to-edit>
+       <br />
       </body>
     </html>

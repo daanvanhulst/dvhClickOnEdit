@@ -16,4 +16,8 @@
                 alert("value got saved: " + value)
             }
         };
+
+        $scope.saveTextField = function(value) {
+            console.log("in the callback in controller with value: " + value);
+        }
     });
