@@ -7,23 +7,23 @@
  */
 module ClickToEdit {
 
-    export class RichTextAreaEdit {
+    export class TextAreaEdit {
         // #region Angular directive properties, fields, and methods
         public link: (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => void;
         public scope = false;
-        public templateUrl = "dvhClickToEdit/dvhRichTextAreaEdit/dvhRichTextAreaEdit.html";
+        public templateUrl = "dvhClickToEdit/dvhTextAreaEdit/dvhTextAreaEdit.html";
         // #endregion
 
         // #region Initialization and destruction
         constructor() {
-            RichTextAreaEdit.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
+            TextAreaEdit.prototype.link = (scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) => {
                 scope.$on("$destroy", this.destruct);
             };
         }
 
         public static Factory() {
             var directive = () => {
-                return new RichTextAreaEdit();
+                return new TextAreaEdit();
             };
 
             directive["$inject"] = [];
@@ -37,6 +37,6 @@ module ClickToEdit {
         // #endregion
     }
 
-    angular.module("dvhClickToEdit.dvhRichTextAreaEdit", ["textAngular"])
-        .directive("dvhRichTextAreaEdit", RichTextAreaEdit.Factory());
+    angular.module("dvhClickToEdit.dvhTextAreaEdit", ["textAngular"])
+        .directive("dvhTextAreaEdit", TextAreaEdit.Factory());
 }

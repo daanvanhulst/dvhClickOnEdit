@@ -68,7 +68,8 @@ var ClickToEdit;
     angular.module("dvhClickToEdit", [
         "dvhClickToEdit.editableDirectiveFactory",
         "dvhClickToEdit.dvhTextEdit",
-        "dvhClickToEdit.dvhTextAreaEdit"
+        "dvhClickToEdit.dvhTextAreaEdit",
+        "dvhClickToEdit.dvhRichTextAreaEdit"
     ]).directive("dvhClickToEdit", ClickToEditElement.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
@@ -105,6 +106,41 @@ var ClickToEdit;
     })();
     ClickToEdit.TextAreaEdit = TextAreaEdit;
     angular.module("dvhClickToEdit.dvhTextAreaEdit", ["textAngular"]).directive("dvhTextAreaEdit", TextAreaEdit.Factory());
+})(ClickToEdit || (ClickToEdit = {}));
+
+/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../dvhClickToEdit.ts" />
+/**
+ * @ngdoc overview
+ * @name ClickToEdit
+ */
+var ClickToEdit;
+(function (ClickToEdit) {
+    var RichTextAreaEdit = (function () {
+        // #endregion
+        // #region Initialization and destruction
+        function RichTextAreaEdit() {
+            var _this = this;
+            this.scope = false;
+            this.templateUrl = "dvhClickToEdit/dvhRichTextAreaEdit/dvhRichTextAreaEdit.html";
+            RichTextAreaEdit.prototype.link = function (scope, element, attrs) {
+                scope.$on("$destroy", _this.destruct);
+            };
+        }
+        RichTextAreaEdit.Factory = function () {
+            var directive = function () {
+                return new RichTextAreaEdit();
+            };
+            directive["$inject"] = [];
+            return directive;
+        };
+        RichTextAreaEdit.prototype.destruct = function () {
+            console.log("destroying");
+        };
+        return RichTextAreaEdit;
+    })();
+    ClickToEdit.RichTextAreaEdit = RichTextAreaEdit;
+    angular.module("dvhClickToEdit.dvhRichTextAreaEdit", ["textAngular"]).directive("dvhRichTextAreaEdit", RichTextAreaEdit.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />
@@ -152,6 +188,9 @@ var ClickToEditFactories;
             switch (type) {
                 case "textArea":
                     element = "<span dvh-text-area-edit></span>";
+                    break;
+                case "richTextArea":
+                    element = "<span dvh-rich-text-area-edit></span>";
                     break;
                 case "text":
                 default:

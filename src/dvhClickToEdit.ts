@@ -98,7 +98,8 @@ module ClickToEdit {
     angular.module("dvhClickToEdit", [
         "dvhClickToEdit.editableDirectiveFactory",
         "dvhClickToEdit.dvhTextEdit",
-        "dvhClickToEdit.dvhTextAreaEdit"
+        "dvhClickToEdit.dvhTextAreaEdit",
+        "dvhClickToEdit.dvhRichTextAreaEdit"
     ])
     .directive("dvhClickToEdit", ClickToEditElement.Factory());
 }

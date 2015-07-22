@@ -20,4 +20,8 @@
         $scope.saveTextField = function(value) {
             console.log("in the callback in controller with value: " + value);
         }
+
+        $scope.saveRichTestAreaField = function(value) {
+            console.log("in the callback in controller with value: " + value);
+        }
     });
