@@ -33,13 +33,22 @@ var ClickToEdit;
                     if (angular.isDefined(scope.onSave)) {
                         scope.isoConfig.onSave = scope.onSave;
                     }
+                    scope.clickToEditConfig = scope.isoConfig;
                     scope.editMode = false;
                 },
                 post: function (scope, element, attrs, ctrl) {
                     scope.saveValue = function (value) {
-                        scope.editMode = false;
                         if (angular.isFunction(scope.isoConfig.onSave)) {
-                            scope.isoConfig.onSave(value);
+                            var promise = scope.isoConfig.onSave(value);
+                            if (!promise) {
+                                scope.setUpdatedValue(scope.isoConfig.value);
+                                return;
+                            }
+                            promise.then(function () {
+                                scope.setUpdatedValue(scope.isoConfig.value);
+                            }, function (error) {
+                                console.log(error);
+                            });
                         }
                     };
                     // Create the editable element
@@ -48,6 +57,10 @@ var ClickToEdit;
                     var e = $compile(editableElement)(scope);
                     //Replace the current element with the editable element
                     element.replaceWith(e);
+                    scope.setUpdatedValue = function (value) {
+                        scope.clickToEditConfig.value = value;
+                        scope.editMode = false;
+                    };
                     scope.$on("$destroy", _this.destruct);
                 }
             };
@@ -70,7 +83,8 @@ var ClickToEdit;
         "dvhClickToEdit.dvhTextEdit",
         "dvhClickToEdit.dvhTextAreaEdit",
         "dvhClickToEdit.dvhRichTextAreaEdit"
-    ]).directive("dvhClickToEdit", ClickToEditElement.Factory());
+    ])
+        .directive("dvhClickToEdit", ClickToEditElement.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />
@@ -105,7 +119,8 @@ var ClickToEdit;
         return TextAreaEdit;
     })();
     ClickToEdit.TextAreaEdit = TextAreaEdit;
-    angular.module("dvhClickToEdit.dvhTextAreaEdit", ["textAngular"]).directive("dvhTextAreaEdit", TextAreaEdit.Factory());
+    angular.module("dvhClickToEdit.dvhTextAreaEdit", ["textAngular"])
+        .directive("dvhTextAreaEdit", TextAreaEdit.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />
@@ -140,7 +155,8 @@ var ClickToEdit;
         return RichTextAreaEdit;
     })();
     ClickToEdit.RichTextAreaEdit = RichTextAreaEdit;
-    angular.module("dvhClickToEdit.dvhRichTextAreaEdit", ["textAngular"]).directive("dvhRichTextAreaEdit", RichTextAreaEdit.Factory());
+    angular.module("dvhClickToEdit.dvhRichTextAreaEdit", ["textAngular"])
+        .directive("dvhRichTextAreaEdit", RichTextAreaEdit.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />
@@ -174,7 +190,8 @@ var ClickToEdit;
         return TextEdit;
     })();
     ClickToEdit.TextEdit = TextEdit;
-    angular.module("dvhClickToEdit.dvhTextEdit", []).directive("dvhTextEdit", TextEdit.Factory());
+    angular.module("dvhClickToEdit.dvhTextEdit", [])
+        .directive("dvhTextEdit", TextEdit.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />

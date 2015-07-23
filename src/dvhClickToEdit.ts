@@ -9,18 +9,20 @@ module ClickToEdit {
     interface IClickToEditConfig {
         fieldType: string;
         value: string;
-        onSave: ( value ) => void;
+        onSave: ( value ) => ng.IPromise<void>;
     }
 
     export interface IClickToEditScope extends ng.IScope {
         clickToEditConfig: IClickToEditConfig;
         value;
         fieldType: string;
-        onSave: ( value ) => void;
+        onSave: ( value ) => ng.IPromise<void>;
 
         isoConfig: IClickToEditConfig;
 		editMode: boolean;
         saveValue: ( value ) => void;
+
+        setUpdatedValue: (value: string) => void;
     }
 
     export class ClickToEditElement {
@@ -53,15 +55,29 @@ module ClickToEdit {
                     if ( angular.isDefined(scope.fieldType) ) { scope.isoConfig.fieldType = scope.fieldType; }
                     if ( angular.isDefined(scope.onSave) )    {  scope.isoConfig.onSave = scope.onSave; }
 
+                    scope.clickToEditConfig = scope.isoConfig;
+
                     scope.editMode = false;
                 },
                 post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => {
 
                     scope.saveValue = function(value) {
-                        scope.editMode = false;
 
                         if (angular.isFunction(scope.isoConfig.onSave)) {
-                            scope.isoConfig.onSave(value);
+                            var promise = scope.isoConfig.onSave(value);
+
+                            if (!promise) {
+                                scope.setUpdatedValue(scope.isoConfig.value);
+                                return;
+                            }
+
+                            promise.then(
+                                function() {
+                                    scope.setUpdatedValue(scope.isoConfig.value);
+                                },
+                                function(error) {
+                                    console.log(error);
+                                });
                         }
                     };
 
@@ -73,6 +89,11 @@ module ClickToEdit {
 
                     //Replace the current element with the editable element
                     element.replaceWith(e);
+
+                    scope.setUpdatedValue = function(value) {
+                        scope.clickToEditConfig.value = value;
+                        scope.editMode = false;
+                    };
 
                     scope.$on("$destroy", this.destruct);
                 }

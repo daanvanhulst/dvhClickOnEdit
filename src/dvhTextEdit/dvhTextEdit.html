@@ -1,4 +1,4 @@
-<span ng-show="!editMode" ng-bind="isoConfig.value"></span>
+<span ng-show="!editMode" ng-bind="clickToEditConfig.value"></span>
 <input ng-show="editMode" type="text" ng-model="isoConfig.value" />
 <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a>
 <a ng-show="editMode" ng-click="saveValue(isoConfig.value)"><i class="fa fa-floppy-o"></i> Save</a>
