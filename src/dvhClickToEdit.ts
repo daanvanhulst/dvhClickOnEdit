@@ -17,19 +17,21 @@ module ClickToEdit {
         value;
         fieldType: string;
         onSave: ( value ) => ng.IPromise<void>;
+        setUpdatedValue(value: string);
 
-        isoConfig: IClickToEditConfig;
 		editMode: boolean;
+        resolvingData: boolean;
+        errorMessage: string;
+        originalValue: string;
         saveValue: ( value ) => void;
-
-        setUpdatedValue: (value: string) => void;
+        discardValue: () => void;
     }
 
     export class ClickToEditElement {
         // #region Angular directive properties, fields, and methods
         public link: {
-            pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => void;
-            post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => void;
+            pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => void;
+            post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => void;
         };
         public scope = {
             clickToEditConfig: "=?",
@@ -42,47 +44,63 @@ module ClickToEdit {
         // #region Initialization and destruction
         constructor(editableDirectiveFactory, $compile) {
 
-            ClickToEditElement.prototype.link = {
-                pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => {
+            this._$compile = $compile;
+            this._editableDirectiveFactory = editableDirectiveFactory;
 
-                    if (angular.isDefined(scope.clickToEditConfig)) {
-                        scope.isoConfig = scope.clickToEditConfig;
-                    } else {
-                        scope.isoConfig = { value: "", fieldType: "text", onSave: null };
+            ClickToEditElement.prototype.link = {
+                pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => {
+
+                    if (angular.isUndefined(scope.clickToEditConfig)) {
+                        scope.clickToEditConfig = { value: "", fieldType: "text", onSave: null };
                     }
 
-                    if ( angular.isDefined(scope.value) )     { scope.isoConfig.value = scope.value; }
-                    if ( angular.isDefined(scope.fieldType) ) { scope.isoConfig.fieldType = scope.fieldType; }
-                    if ( angular.isDefined(scope.onSave) )    {  scope.isoConfig.onSave = scope.onSave; }
+                    if ( angular.isDefined(scope.value) )     { scope.clickToEditConfig.value = scope.value; }
+                    if ( angular.isDefined(scope.fieldType) ) { scope.clickToEditConfig.fieldType = scope.fieldType; }
+                    if ( angular.isDefined(scope.onSave) )    {  scope.clickToEditConfig.onSave = scope.onSave; }
 
-                    scope.clickToEditConfig = scope.isoConfig;
+                    scope.originalValue = scope.clickToEditConfig.value;
 
                     scope.editMode = false;
                 },
-                post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ctrl ) => {
-
+                post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => {
                     scope.saveValue = function(value) {
+                        scope.errorMessage = "";
+                        if (angular.isFunction(scope.clickToEditConfig.onSave)) {
 
-                        if (angular.isFunction(scope.isoConfig.onSave)) {
-                            var promise = scope.isoConfig.onSave(value);
+                            var promise = scope.clickToEditConfig.onSave(value);
 
                             if (!promise) {
-                                scope.setUpdatedValue(scope.isoConfig.value);
+                                scope.setUpdatedValue(scope.clickToEditConfig.value);
                                 return;
                             }
 
+                            scope.resolvingData = true;
                             promise.then(
                                 function() {
-                                    scope.setUpdatedValue(scope.isoConfig.value);
+                                    scope.setUpdatedValue(scope.clickToEditConfig.value);
                                 },
                                 function(error) {
-                                    console.log(error);
+                                    if (error) {
+                                        scope.errorMessage = error;
+                                    } else {
+                                        scope.errorMessage = "error in application when saving";
+                                    }
+                                })
+                                .finally(function(){
+                                    scope.resolvingData = false;
                                 });
                         }
                     };
 
+                    scope.discardValue = function() {
+                        scope.errorMessage = "";
+                        scope.clickToEditConfig.value = scope.originalValue;
+                        scope.value = scope.originalValue;
+                        scope.editMode = false;
+                    };
+
                     // Create the editable element
-                    var editableElement = editableDirectiveFactory.createEditableDirective(scope.isoConfig.fieldType);
+                    var editableElement = editableDirectiveFactory.createEditableDirective(scope.clickToEditConfig.fieldType);
 
                     //Compile the editable element
                     var e = $compile(editableElement)(scope);
@@ -91,11 +109,15 @@ module ClickToEdit {
                     element.replaceWith(e);
 
                     scope.setUpdatedValue = function(value) {
+                        scope.originalValue = value;
                         scope.clickToEditConfig.value = value;
+                        scope.value = value;
                         scope.editMode = false;
                     };
 
                     scope.$on("$destroy", this.destruct);
+
+                    this._scope = scope;
                 }
             };
         }
@@ -111,8 +133,16 @@ module ClickToEdit {
         }
 
         private destruct() {
-            console.log("destroying");
+            this._$compile                    = null;
+            this._editableDirectiveFactory    = null;
+            this._scope                       = null;
         }
+        // #endregion
+
+        // #region Private class properties, fields, and methods
+        private _editableDirectiveFactory    : any;
+        private _$compile                    : ng.ICompileService;
+        private _scope                       : IClickToEditScope;
         // #endregion
     }
 

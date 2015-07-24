@@ -18,19 +18,7 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('dvhClickToEdit/dvhRichTextAreaEdit/dvhRichTextAreaEdit.html',
-    '<div ng-show="!editMode" ng-bind-html="clickToEditConfig.value"></div><div ng-show="editMode" text-angular="" ng-model="isoConfig.value"></div><a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a> <a ng-show="editMode" ng-click="saveValue(isoConfig.value)"><i class="fa fa-floppy-o"></i> Save</a>');
-}]);
-})();
-
-(function(module) {
-try {
-  module = angular.module('dvhClickToEdit-tpl');
-} catch (e) {
-  module = angular.module('dvhClickToEdit-tpl', []);
-}
-module.run(['$templateCache', function($templateCache) {
-  $templateCache.put('dvhClickToEdit/dvhTextAreaEdit/dvhTextAreaEdit.html',
-    '<div ng-show="!editMode" ng-bind-html="clickToEditConfig.value"></div><textarea ng-show="editMode" ng-bind="isoConfig.value"></textarea> <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a> <a ng-show="editMode" ng-click="saveValue(isoConfig.value)"><i class="fa fa-floppy-o"></i> Save</a>');
+    '<div ng-show="!editMode" ng-bind-html="clickToEditConfig.value"></div><div ng-show="editMode" text-angular="" ng-model="clickToEditConfig.value"></div><a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a> <a ng-show="editMode" ng-click="saveValue(clickToEditConfig.value)"><i class="fa fa-floppy-o"></i> Save</a> <a ng-show="editMode" ng-click="discardValue()"><i class="fa fa-trash-o"></i> Discard</a> <i ng-show="resolvingData" class="fa fa-cog fa-spin"></i><div class="form-group has-error" ng-show="errorMessage"><span class="help-block">{{errorMessage}}</span></div>');
 }]);
 })();
 
@@ -42,6 +30,18 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('dvhClickToEdit/dvhTextEdit/dvhTextEdit.html',
-    '<span ng-show="!editMode" ng-bind="clickToEditConfig.value"></span> <input ng-show="editMode" type="text" ng-model="isoConfig.value"> <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a> <a ng-show="editMode" ng-click="saveValue(isoConfig.value)"><i class="fa fa-floppy-o"></i> Save</a>');
+    '<span ng-show="!editMode" ng-bind="clickToEditConfig.value"></span> <input ng-show="editMode" type="text" ng-model="clickToEditConfig.value"> <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a> <a ng-show="editMode" ng-click="saveValue(clickToEditConfig.value)"><i class="fa fa-floppy-o"></i> Save</a> <a ng-show="editMode" ng-click="discardValue()"><i class="fa fa-trash-o"></i> Discard</a> <i ng-show="resolvingData" class="fa fa-cog fa-spin"></i><div class="form-group has-error" ng-show="errorMessage"><span class="help-block">{{errorMessage}}</span></div>');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('dvhClickToEdit-tpl');
+} catch (e) {
+  module = angular.module('dvhClickToEdit-tpl', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('dvhClickToEdit/dvhTextAreaEdit/dvhTextAreaEdit.html',
+    '<div ng-show="!editMode" ng-bind="clickToEditConfig.value"></div><textarea ng-show="editMode" ng-model="clickToEditConfig.value"></textarea> <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a> <a ng-show="editMode" ng-click="saveValue(clickToEditConfig.value)"><i class="fa fa-floppy-o"></i> Save</a> <a ng-show="editMode" ng-click="discardValue()"><i class="fa fa-trash-o"></i> Discard</a> <i ng-show="resolvingData" class="fa fa-cog fa-spin"></i><div class="form-group has-error" ng-show="errorMessage"><span class="help-block">{{errorMessage}}</span></div>');
 }]);
 })();

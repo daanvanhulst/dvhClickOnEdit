@@ -28,7 +28,7 @@ var gulp = require('gulp'),
 var config = new Config();
 
 gulp.task('clean', function () {
-  del(['dist/']);
+  del.sync(['dist/']);
 });
 
 gulp.task('karma-watch', function() {
