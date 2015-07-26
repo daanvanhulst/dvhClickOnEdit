@@ -1,7 +1,7 @@
-<div ng-show="!editMode" ng-bind-html="clickToEditConfig.value"></div>
-<div ng-show="editMode" text-angular ng-model="clickToEditConfig.value"></div>
+<div ng-show="!editMode" ng-bind-html="clickToEditConfig.model.value"></div>
+<div ng-show="editMode" text-angular ng-model="clickToEditConfig.model.value"></div>
 <a ng-show="!editMode" ng-click="editMode = true"><i class="fa fa-pencil fa-fw"></i> Edit</a>
-<a ng-show="editMode" ng-click="saveValue(clickToEditConfig.value)"><i class="fa fa-floppy-o"></i> Save</a>
+<a ng-show="editMode" ng-click="saveModel(clickToEditConfig.model)"><i class="fa fa-floppy-o"></i> Save</a>
 <a ng-show="editMode" ng-click="discardValue()"><i class="fa fa-trash-o"></i> Discard</a>
 <i ng-show="resolvingData" class="fa fa-cog fa-spin"></i>
 <div class="form-group has-error" ng-show="errorMessage"><span class="help-block">{{errorMessage}}</span></div>

@@ -12,19 +12,19 @@ var ClickToEdit;
             var _this = this;
             this.scope = {
                 clickToEditConfig: "=?",
-                fieldType: "@",
-                value: "@",
-                onSave: "&"
+                fieldType: "@?",
+                model: "=?",
+                onSave: "&?"
             };
             this._$compile = $compile;
             this._editableDirectiveFactory = editableDirectiveFactory;
             ClickToEditElement.prototype.link = {
                 pre: function (scope, element, attrs) {
                     if (angular.isUndefined(scope.clickToEditConfig)) {
-                        scope.clickToEditConfig = { value: "", fieldType: "text", onSave: null };
+                        scope.clickToEditConfig = { model: { value: "" }, fieldType: "text", onSave: null };
                     }
-                    if (angular.isDefined(scope.value)) {
-                        scope.clickToEditConfig.value = scope.value;
+                    if (angular.isDefined(scope.model) && angular.isDefined(scope.model.value)) {
+                        scope.clickToEditConfig.model = scope.model;
                     }
                     if (angular.isDefined(scope.fieldType)) {
                         scope.clickToEditConfig.fieldType = scope.fieldType;
@@ -32,21 +32,21 @@ var ClickToEdit;
                     if (angular.isDefined(scope.onSave)) {
                         scope.clickToEditConfig.onSave = scope.onSave;
                     }
-                    scope.originalValue = scope.clickToEditConfig.value;
+                    scope.originalValue = scope.clickToEditConfig.model.value;
                     scope.editMode = false;
                 },
                 post: function (scope, element, attrs) {
-                    scope.saveValue = function (value) {
+                    scope.saveModel = function (model) {
                         scope.errorMessage = "";
                         if (angular.isFunction(scope.clickToEditConfig.onSave)) {
-                            var promise = scope.clickToEditConfig.onSave(value);
+                            var promise = scope.clickToEditConfig.onSave({ model: model });
                             if (!promise) {
-                                scope.setUpdatedValue(scope.clickToEditConfig.value);
+                                scope.setUpdatedModel(model);
                                 return;
                             }
                             scope.resolvingData = true;
                             promise.then(function () {
-                                scope.setUpdatedValue(scope.clickToEditConfig.value);
+                                scope.setUpdatedModel(model);
                             }, function (error) {
                                 if (error) {
                                     scope.errorMessage = error;
@@ -54,15 +54,16 @@ var ClickToEdit;
                                 else {
                                     scope.errorMessage = "error in application when saving";
                                 }
-                            }).finally(function () {
+                            })
+                                .finally(function () {
                                 scope.resolvingData = false;
                             });
                         }
                     };
                     scope.discardValue = function () {
                         scope.errorMessage = "";
-                        scope.clickToEditConfig.value = scope.originalValue;
-                        scope.value = scope.originalValue;
+                        scope.clickToEditConfig.model.value = scope.originalValue;
+                        scope.model.value = scope.originalValue;
                         scope.editMode = false;
                     };
                     // Create the editable element
@@ -71,10 +72,10 @@ var ClickToEdit;
                     var e = $compile(editableElement)(scope);
                     //Replace the current element with the editable element
                     element.replaceWith(e);
-                    scope.setUpdatedValue = function (value) {
-                        scope.originalValue = value;
-                        scope.clickToEditConfig.value = value;
-                        scope.value = value;
+                    scope.setUpdatedModel = function (model) {
+                        scope.originalValue = model.value;
+                        scope.clickToEditConfig.model = model;
+                        scope.model = model;
                         scope.editMode = false;
                     };
                     scope.$on("$destroy", _this.destruct);
@@ -102,7 +103,8 @@ var ClickToEdit;
         "dvhClickToEdit.dvhTextEdit",
         "dvhClickToEdit.dvhTextAreaEdit",
         "dvhClickToEdit.dvhRichTextAreaEdit"
-    ]).directive("dvhClickToEdit", ClickToEditElement.Factory());
+    ])
+        .directive("dvhClickToEdit", ClickToEditElement.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />
@@ -137,41 +139,8 @@ var ClickToEdit;
         return TextAreaEdit;
     })();
     ClickToEdit.TextAreaEdit = TextAreaEdit;
-    angular.module("dvhClickToEdit.dvhTextAreaEdit", ["textAngular"]).directive("dvhTextAreaEdit", TextAreaEdit.Factory());
-})(ClickToEdit || (ClickToEdit = {}));
-
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../dvhClickToEdit.ts" />
-/**
- * @ngdoc overview
- * @name ClickToEdit
- */
-var ClickToEdit;
-(function (ClickToEdit) {
-    var TextEdit = (function () {
-        // #endregion
-        // #region Initialization and destruction
-        function TextEdit() {
-            var _this = this;
-            this.templateUrl = "dvhClickToEdit/dvhTextEdit/dvhTextEdit.html";
-            TextEdit.prototype.link = function (scope, element, attrs) {
-                scope.$on("$destroy", _this.destruct);
-            };
-        }
-        TextEdit.Factory = function () {
-            var directive = function () {
-                return new TextEdit();
-            };
-            directive["$inject"] = [];
-            return directive;
-        };
-        TextEdit.prototype.destruct = function () {
-            console.log("destroying");
-        };
-        return TextEdit;
-    })();
-    ClickToEdit.TextEdit = TextEdit;
-    angular.module("dvhClickToEdit.dvhTextEdit", []).directive("dvhTextEdit", TextEdit.Factory());
+    angular.module("dvhClickToEdit.dvhTextAreaEdit", ["textAngular"])
+        .directive("dvhTextAreaEdit", TextAreaEdit.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />
@@ -206,7 +175,43 @@ var ClickToEdit;
         return RichTextAreaEdit;
     })();
     ClickToEdit.RichTextAreaEdit = RichTextAreaEdit;
-    angular.module("dvhClickToEdit.dvhRichTextAreaEdit", ["textAngular"]).directive("dvhRichTextAreaEdit", RichTextAreaEdit.Factory());
+    angular.module("dvhClickToEdit.dvhRichTextAreaEdit", ["textAngular"])
+        .directive("dvhRichTextAreaEdit", RichTextAreaEdit.Factory());
+})(ClickToEdit || (ClickToEdit = {}));
+
+/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../dvhClickToEdit.ts" />
+/**
+ * @ngdoc overview
+ * @name ClickToEdit
+ */
+var ClickToEdit;
+(function (ClickToEdit) {
+    var TextEdit = (function () {
+        // #endregion
+        // #region Initialization and destruction
+        function TextEdit() {
+            var _this = this;
+            this.templateUrl = "dvhClickToEdit/dvhTextEdit/dvhTextEdit.html";
+            TextEdit.prototype.link = function (scope, element, attrs) {
+                scope.$on("$destroy", _this.destruct);
+            };
+        }
+        TextEdit.Factory = function () {
+            var directive = function () {
+                return new TextEdit();
+            };
+            directive["$inject"] = [];
+            return directive;
+        };
+        TextEdit.prototype.destruct = function () {
+            console.log("destroying");
+        };
+        return TextEdit;
+    })();
+    ClickToEdit.TextEdit = TextEdit;
+    angular.module("dvhClickToEdit.dvhTextEdit", [])
+        .directive("dvhTextEdit", TextEdit.Factory());
 })(ClickToEdit || (ClickToEdit = {}));
 
 /// <reference path="../../typings/tsd.d.ts" />

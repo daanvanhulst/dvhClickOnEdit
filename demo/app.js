@@ -1,9 +1,11 @@
     var app = angular.module("sampleApp", ["dvhClickToEdit-tpl", "dvhClickToEdit"]);
     app.controller("SampleCtrl", function($scope, $timeout, $q) {
-        $scope.text = "blablablabla";
+        $scope.textModel = {id: 0, value: "blablablabla"};
+        $scope.richTextModel = {id: 0, value: "blablablabla"};
+
         $scope.textConfig = {
             fieldType:"text",
-            value: $scope.text,
+            model: { id: 1, value: "testski"},
             onSave: function(value) {
                 alert("value got saved: " + value)
             }
@@ -11,13 +13,14 @@
 
         $scope.textAreaConfig = {
             fieldType:"textArea",
-            value: $scope.text,
+            model: { id: 0, value: "testski" },
             onSave: function(value) {
                 alert('got the value' + value);
             }
         };
 
-        $scope.saveTextField = function(value) {
+        $scope.saveTextField = function(model) {
+            console.log(model);
             var deferred = $q.defer();
             console.log("in onSave");
             $timeout(function() {
@@ -27,7 +30,8 @@
             return deferred.promise;
         };
 
-        $scope.saveRichTestAreaField = function(value) {
+        $scope.saveRichTestAreaField = function(model) {
+            console.log(model);
             var deferred = $q.defer();
             console.log("in onSave");
             $timeout(function() {

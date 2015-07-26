@@ -6,24 +6,32 @@
  */
 module ClickToEdit {
 
+    interface IClickToEditOnSaveParam {
+        model: IClickToEditModel;
+    }
+
+    interface IClickToEditModel {
+        value: string;
+    }
+
     interface IClickToEditConfig {
         fieldType: string;
-        value: string;
-        onSave: ( value ) => ng.IPromise<void>;
+        model: IClickToEditModel;
+        onSave: ( modelParam: IClickToEditOnSaveParam ) => ng.IPromise<void>;
     }
 
     export interface IClickToEditScope extends ng.IScope {
         clickToEditConfig: IClickToEditConfig;
-        value;
+        model: IClickToEditModel;
         fieldType: string;
-        onSave: ( value ) => ng.IPromise<void>;
-        setUpdatedValue(value: string);
+        onSave: (  modelParam: IClickToEditOnSaveParam ) => ng.IPromise<void>;
+        setUpdatedModel(model: IClickToEditModel);
 
 		editMode: boolean;
         resolvingData: boolean;
         errorMessage: string;
         originalValue: string;
-        saveValue: ( value ) => void;
+        saveModel: (  model: IClickToEditModel ) => void;
         discardValue: () => void;
     }
 
@@ -35,9 +43,9 @@ module ClickToEdit {
         };
         public scope = {
             clickToEditConfig: "=?",
-            fieldType: "@",
-            value: "@",
-            onSave: "&"
+            fieldType: "@?",
+            model: "=?",
+            onSave: "&?"
         };
         // #endregion
 
@@ -51,33 +59,36 @@ module ClickToEdit {
                 pre: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => {
 
                     if (angular.isUndefined(scope.clickToEditConfig)) {
-                        scope.clickToEditConfig = { value: "", fieldType: "text", onSave: null };
+                        scope.clickToEditConfig = { model: {value: ""}, fieldType: "text", onSave: null };
                     }
 
-                    if ( angular.isDefined(scope.value) )     { scope.clickToEditConfig.value = scope.value; }
+                    if ( angular.isDefined(scope.model) && angular.isDefined(scope.model.value) ) {
+                        scope.clickToEditConfig.model = scope.model;
+                    }
                     if ( angular.isDefined(scope.fieldType) ) { scope.clickToEditConfig.fieldType = scope.fieldType; }
                     if ( angular.isDefined(scope.onSave) )    {  scope.clickToEditConfig.onSave = scope.onSave; }
 
-                    scope.originalValue = scope.clickToEditConfig.value;
+                    scope.originalValue = scope.clickToEditConfig.model.value;
 
                     scope.editMode = false;
                 },
                 post: ( scope: IClickToEditScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes ) => {
-                    scope.saveValue = function(value) {
+                    scope.saveModel = function( model: IClickToEditModel) {
                         scope.errorMessage = "";
+
                         if (angular.isFunction(scope.clickToEditConfig.onSave)) {
 
-                            var promise = scope.clickToEditConfig.onSave(value);
+                            var promise = scope.clickToEditConfig.onSave({model: model});
 
                             if (!promise) {
-                                scope.setUpdatedValue(scope.clickToEditConfig.value);
+                                scope.setUpdatedModel(model);
                                 return;
                             }
 
                             scope.resolvingData = true;
                             promise.then(
                                 function() {
-                                    scope.setUpdatedValue(scope.clickToEditConfig.value);
+                                    scope.setUpdatedModel(model);
                                 },
                                 function(error) {
                                     if (error) {
@@ -94,8 +105,8 @@ module ClickToEdit {
 
                     scope.discardValue = function() {
                         scope.errorMessage = "";
-                        scope.clickToEditConfig.value = scope.originalValue;
-                        scope.value = scope.originalValue;
+                        scope.clickToEditConfig.model.value = scope.originalValue;
+                        scope.model.value = scope.originalValue;
                         scope.editMode = false;
                     };
 
@@ -108,10 +119,10 @@ module ClickToEdit {
                     //Replace the current element with the editable element
                     element.replaceWith(e);
 
-                    scope.setUpdatedValue = function(value) {
-                        scope.originalValue = value;
-                        scope.clickToEditConfig.value = value;
-                        scope.value = value;
+                    scope.setUpdatedModel = function(model) {
+                        scope.originalValue = model.value;
+                        scope.clickToEditConfig.model = model;
+                        scope.model = model;
                         scope.editMode = false;
                     };
 
